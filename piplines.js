@@ -41,7 +41,6 @@
 
 
 // 3. List the top 5 most common favorite fruits among the users
-
 [
   { // group the user based on favoriteFruit
     $group: {
@@ -95,6 +94,7 @@
   }
 ]
 
+
 // 6. List all unique eye colors present in the collection
 [
   {
@@ -140,5 +140,48 @@
       _id: null,
       avarageNumberOfTags: { $avg: "$numberOfTags" }
     }
+  }
+]
+
+
+// 8. How many users have 'enim' as one of their tags?
+[
+  {
+    $match: {
+      tags: "enim",
+    },
+  },
+  {
+    $count: 'userWithEnim'
+  }
+]
+
+
+// 9. What are the names and age of users who are inactive and have 'velit' as a tag?
+[
+  {
+    $match: {
+      isActive: false,
+      tags: "velit"
+    },
+  },
+  {
+    $project: {
+      name: 1,
+      age: 1
+    }
+  }
+]
+
+
+// 10. How many users have a phone number starting with '+1 (940)'?
+[
+  {
+    $match: {
+      "company.phone": /^\+1 \(940\)/
+    }
+  },
+  {
+    $count: 'usersWithSpecialPhoneNumber'
   }
 ]
