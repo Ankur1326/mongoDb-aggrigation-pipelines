@@ -185,3 +185,111 @@
     $count: 'usersWithSpecialPhoneNumber'
   }
 ]
+
+
+// 11. Who has registered the most recently?
+[
+  {
+    $sort: {
+      registered: -1
+    }
+  },
+  {
+    $limit: 4
+  },
+  {
+    $project: {
+      name: 1,
+      registered: 1,
+      favoriteFruit: 1
+    }
+  }
+]
+
+
+// 12. Categorize users by their favorite fruit
+[
+  {
+    $group: {
+      _id: "$favoriteFruit",
+      users: { $push: "$name" }
+    }
+  }
+]
+
+// 13. How many users have 'ad' as the second tag in their list of tags?
+[
+  {
+    $match: {
+      "tags.1": "ad"
+    }
+  },
+  {
+    $count: 'secondTagAd'
+  }
+]
+
+
+// 14. Find the who have both 'enim' and 'id' as their tags.
+[
+  {
+    $match: {
+      "tags": { $all: ["enim", "id"] }
+    }
+  }
+]
+
+
+// 15. List all companies located in the USA with their corresponding user count?
+[
+  {
+    $match: {
+      "company.location.country": "USA"
+    }
+  },
+  {
+    $group: {
+      _id: null,
+      userCount: { $sum: 1 }
+    }
+  }
+]
+
+
+// lookup 
+[
+  {
+    $lookup: {
+      from: "authors",
+      localField: "author_id",
+      foreignField: "_id",
+      as: "author_details"
+    }
+  },
+  {
+    $addFields: {
+      author_details: {
+        $first: "$author_details"
+      }
+    }
+  }
+]
+
+// or 
+[
+  {
+    $lookup: {
+      from: "authors",
+      localField: "author_id",
+      foreignField: "_id",
+      as: "author_details"
+    }
+  },
+  {
+    $addFields: {
+      author_details: {
+        $arrayElemAt: ["$author_details", 0]
+      }
+    }
+  }
+]
